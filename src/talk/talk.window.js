@@ -78,6 +78,8 @@ function createTalkWindow() {
 
 	setupTray(window)
 
+	// Configure the spell checker to use English (US) and German
+	window.webContents.session.setSpellCheckerLanguages(['en-US', 'de'])
 	window.loadURL(getWindowUrl('talk') + '#/apps/spreed')
 
 	return window
