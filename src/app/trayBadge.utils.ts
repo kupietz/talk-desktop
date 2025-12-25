@@ -9,7 +9,6 @@ import {
 	BrowserWindow,
 	nativeImage,
 } from 'electron'
-import fs from 'node:fs'
 
 // Cache for the base icon data
 let cachedBaseIconPath: string | null = null
@@ -29,10 +28,12 @@ export async function createTrayIconWithBadge(baseIconPath: string, count: numbe
 	}
 
 	// Read and cache the base icon as data URL
+	// For Windows .ico files, we need to convert through nativeImage first
 	if (cachedBaseIconPath !== baseIconPath || !cachedBaseIconDataUrl) {
 		cachedBaseIconPath = baseIconPath
-		const buffer = fs.readFileSync(baseIconPath)
-		cachedBaseIconDataUrl = `data:image/png;base64,${buffer.toString('base64')}`
+		// Use nativeImage to handle .ico files properly on Windows
+		const baseImage = nativeImage.createFromPath(baseIconPath)
+		cachedBaseIconDataUrl = baseImage.toDataURL()
 	}
 
 	// Create invisible window for rendering
